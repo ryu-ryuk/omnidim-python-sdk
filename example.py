@@ -1,4 +1,5 @@
 import os
+import base64
 from omnidimension import Client
 
 # Example usage of the Omnidimension SDK
@@ -287,8 +288,118 @@ def example_of_integrations():
     
     print("\n=== End of Integrations Examples ===")
     
+def main_knowledge_base():
+    # Example 1: List all knowledge base files
+    print("\n=== Listing all knowledge base files ===\n")
+    response = omnidimension_client.agent.list(page=1, page_size=10)
+    agent_id = response['json']['bots'][0]['id'] if len(response['json']['bots']) else None
+    try:
+        response = omnidimension_client.knowledge_base.list()
+        print(f"Status: {response['status']}")
+        print(f"Files: {response['json']}")
+    except Exception as e:
+        print(f"Error listing knowledge base files: {e}")
+    
+    # Example 2: Check if a file can be uploaded
+    print("\n=== Checking if a file can be uploaded ===\n")
+    try:
+        # Assuming a 1MB PDF file
+        file_size = 1024 * 1024
+        response = omnidimension_client.knowledge_base.can_upload(file_size)
+        print(f"Status: {response['status']}")
+        print(f"Can upload: {response['json']}")
+    except Exception as e:
+        print(f"Error checking upload capability: {e}")
+    
+    try:
+        # Read a PDF file and encode it as base64
+        with open("sample.pdf", "rb") as pdf_file:
+            file_data = base64.b64encode(pdf_file.read()).decode('utf-8')
+        
+        response = omnidimension_client.knowledge_base.create(file_data, "sample.pdf")
+        print(f"Status: {response['status']}")
+        print(f"Uploaded file: {response['json']}")
+        
+        # Store the file ID for later examples
+        file_id = response['json'].get('file', {}).get('id')
+    except Exception as e:
+        print(f"Error uploading file: {e}")
+    
+    # Example 4: Attach files to an agent
+    print(f"\n=== Attaching files to an agent ===\n {file_id} {agent_id}")
+    try:
+        # Assuming we have file IDs and an agent ID
+        file_ids = [file_id]  # Replace with actual file IDs
+        
+        response = omnidimension_client.knowledge_base.attach(file_ids, agent_id)
+        print(f"Status: {response['status']}")
+        print(f"Result: {response['json']}")
+    except Exception as e:
+        print(f"Error attaching files: {e}")
+    
+    # Example 5: Detach files from an agent
+    print(f"\n=== Detaching files from an agent ===\n agent_id{agent_id} {file_id}")
+    try:
+        # Assuming we have file IDs and an agent ID
+        file_ids = [file_id]  # Replace with actual file IDs
+        
+        response = omnidimension_client.knowledge_base.detach(file_ids, agent_id)
+        print(f"Status: {response['status']}")
+        print(f"Result: {response['json']}")
+    except Exception as e:
+        print(f"Error detaching files: {e}")
+    
+    # Example 6: Delete a file from knowledge base
+    print(f"\n=== Deleting a file from knowledge base ===\n {file_id}" )
+    try:
+        # Assuming we have a file ID
+        
+        response = omnidimension_client.knowledge_base.delete(file_id)
+        print(f"Status: {response['status']}")
+        print(f"Result: {response['json']}")
+    except Exception as e:
+        print(f"Error deleting file: {e}")
+
+def main_phone_number():
+    # Example 1: List all phone numbers
+    print("\n=== Listing all phone numbers ===\n")
+    phone_number_id = 1
+    response = omnidimension_client.agent.list(page=1, page_size=10)
+    agent_id = response['json']['bots'][0]['id'] if len(response['json']['bots']) else None
+    try:
+        response = omnidimension_client.phone_number.list(page=1, page_size=10)
+        print(f"Status: {response['status']}")
+        print(f"Phone numbers: {response['json']}")
+        if len(response['json']['phone_numbers']):
+            phone_number_id = response['json']['phone_numbers'][0]['id']
+    except Exception as e:
+        print(f"Error listing phone numbers: {e}")
+    
+    # Example 2: Attach a phone number to an agent
+    print("\n=== Attaching a phone number to an agent ===\n")
+    try:
+        # Assuming we have a phone number ID and an agent ID
+        response = omnidimension_client.phone_number.attach(phone_number_id, agent_id)
+        print(f"Status: {response['status']}")
+        print(f"Result: {response['json']}")
+
+    except Exception as e:
+        print(f"Error attaching phone number: {e}")
+    
+    # Example 3: Detach a phone number from an agent
+    print("\n=== Detaching a phone number from an agent ===\n")
+    try:
+        response = omnidimension_client.phone_number.detach(phone_number_id)
+        print(f"Status: {response['status']}")
+        print(f"Result: {response['json']}")
+    except Exception as e:
+        print(f"Error detaching phone number: {e}")
+
 if __name__ == "__main__":
     # Uncomment the function you want to run
     # main_agent()       # Run agent examples
     # main_call_log()    # Run call log examples
-    example_of_integrations()  # Run integrations examples
+    # example_of_integrations()  # Run integrations examples
+    main_knowledge_base()  # Run knowledge base examples
+    # main_phone_number()    # Run phone number examples
+    pass

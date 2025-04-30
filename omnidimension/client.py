@@ -29,6 +29,8 @@ class Client(object):
         self._agent = None
         self._call = None
         self._integrations = None
+        self._knowledge_base = None
+        self._phone_number = None
         
         # Verify API key format (basic validation)
         if not isinstance(api_key, str) or len(api_key.strip()) < 8:
@@ -151,8 +153,24 @@ class Client(object):
 
     @property
     def integrations(self):
-        """Get the Callback client."""
+        """Get the Integrations client."""
         if self._integrations is None:
             from .Integrations import Integrations
             self._integrations = Integrations(self)
         return self._integrations
+        
+    @property
+    def knowledge_base(self):
+        """Get the KnowledgeBase client."""
+        if self._knowledge_base is None:
+            from .KnowledgeBase import KnowledgeBase
+            self._knowledge_base = KnowledgeBase(self)
+        return self._knowledge_base
+        
+    @property
+    def phone_number(self):
+        """Get the PhoneNumber client."""
+        if self._phone_number is None:
+            from .PhoneNumber import PhoneNumber
+            self._phone_number = PhoneNumber(self)
+        return self._phone_number
