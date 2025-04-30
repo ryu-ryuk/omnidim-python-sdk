@@ -5,7 +5,10 @@ from omnidimension import Client
 
 # Initialize the Omnidimension client
 api_key = os.environ.get('OMNIDIM_API_KEY', 'api_key')
-client = Client(api_key, base_url='http://localhost:8069/api/v1/')
+# production 
+client = Client(api_key)
+# staging
+client = Client(api_key, base_url='https://dashboard.staging.omnidim.io/api/v1/')
 
 # Helper function to pretty print JSON responses
 def print_json_response(response, title=None):
