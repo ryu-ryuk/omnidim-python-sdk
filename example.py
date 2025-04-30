@@ -4,11 +4,230 @@ import json
 from omnidimension import Client
 
 # Initialize the Omnidimension client
-api_key = os.environ.get('OMNIDIM_API_KEY', 'api_key')
+api_key = os.environ.get('OMNIDIM_API_KEY', 'YBNmK6VxNLnPkIxwRNbZBKFR5C6_sRP0sSUFZeMr4p8')
 # production 
 client = Client(api_key)
 # staging
 client = Client(api_key, base_url='https://dashboard.staging.omnidim.io/api/v1/')
+
+# ===== Example Usage Functions =====
+
+def run_agent_examples():
+    """Run examples for agent operations"""
+    print("\n===== RUNNING AGENT EXAMPLES =====\n")
+    
+    # List agents
+    agents_data = list_agents()
+    
+    # Create a basic agent
+    agent_data = create_agent_with_full_config(
+        name="Example Agent",
+        welcome_message="Hello! I'm an example agent created using the Omnidimension SDK.",
+        context_breakdown=[
+            {"title": "Purpose", "body": "This agent demonstrates the SDK capabilities."}
+        ],
+        post_call_actions={
+            "email": {
+                "enabled": True,
+                "recipients": ["example@example.com"],
+                "include": ["summary", "extracted_variables"]
+            },
+            "extracted_variables": [
+                {
+                    "key": "caller_product_interest",
+                    "prompt": "Identify the products the caller is interested in..."
+                },
+            ]
+        }
+    )
+    
+    # Get the agent ID
+    agent_id = agent_data.get('id')
+    if agent_id:
+        # Get agent details
+        get_agent(agent_id)
+        
+        # Update the agent
+        update_agent(agent_id, {"name": "Updated Example Agent"})
+        
+        # Uncomment to delete the agent
+        # delete_agent(agent_id)
+
+def run_call_log_examples():
+    """Run examples for call log operations"""
+    print("\n===== RUNNING CALL LOG EXAMPLES =====\n")
+    
+    # Get call logs
+    call_logs = get_call_logs()
+    
+    # Get details of the first call log if available
+    if call_logs.get('call_log_data') and len(call_logs['call_log_data']) > 0:
+        call_log_id = call_logs['call_log_data'][0]['id']
+        get_call_log_details(call_log_id)
+    else:
+        print("No call logs found.")
+    
+    # Uncomment to dispatch a call
+    # agents_data = list_agents()
+    # if agents_data.get('bots') and len(agents_data['bots']) > 0:
+    #     agent_id = agents_data['bots'][0]['id']
+    #     dispatch_call(agent_id, '+1234567890')
+
+def run_integration_examples():
+    """Run examples for integration operations"""
+    print("\n===== RUNNING INTEGRATION EXAMPLES =====\n")
+    
+    # Get integration format examples
+    get_integration_format_examples()
+    
+    # Get user integrations
+    get_user_integrations()
+    
+    # Create a custom API integration
+    api_integration = create_custom_api_integration(
+        name="Weather API Integration",
+        description="Integration with weather service",
+        url="https://api.weatherapi.com/v1/current.json",
+        method="GET",
+        headers=[
+            {"key": "Content-Type", "value": "application/json"}
+        ],
+        query_params=[
+            
+            {
+                "key": "q",
+                "description": "Location query",
+                "type": "string",
+                "required": True,
+                "isLLMGenerated": True
+            }
+        ]
+    )
+    
+    # Create a Cal.com integration
+    cal_integration = create_cal_integration(
+        name="Meeting Scheduler Integration",
+        description="Integration with Cal.com calendar",
+        cal_api_key="cal_api_key_example",
+        cal_id="cal_user_id_example",
+        cal_timezone="America/New_York"
+    )
+    
+    # Create integration from JSON
+    integration_data = {
+        "name": "CRM API Integration",
+        "description": "Integration with CRM service",
+        "url": "https://api.crm-example.com/v1/contacts",
+        "method": "POST",
+        "integration_type": "custom_api",
+        "headers": [
+            {"key": "Authorization", "value": "Bearer token123"},
+            {"key": "Content-Type", "value": "application/json"}
+        ],
+        "body_type": "json",
+        "body_params": [
+            {
+                "key": "name",
+                "description": "Contact name",
+                "type": "string",
+                "required": True,
+                "isLLMGenerated": True
+            },
+            {
+                "key": "email",
+                "description": "Contact email",
+                "type": "string",
+                "required": True,
+                "isLLMGenerated": True
+            },
+            {
+                "key": "phone",
+                "description": "Contact phone number",
+                "type": "string",
+                "required": False,
+                "isLLMGenerated": True
+            }
+        ]
+    }
+    json_integration = create_integration_from_json(integration_data)
+    
+    # Create an agent for integration examples
+    agent_data = create_agent(
+        name="Integration Test Agent",
+        welcome_message="Hello! I'm an agent for testing integrations.",
+        context_breakdown=[
+            {"title": "Purpose", "body": "This agent demonstrates integration capabilities."}
+        ]
+    )
+    
+    # Get the agent ID and integration ID
+    agent_id = agent_data.get('id')
+    api_integration_id = api_integration.get('id')
+    
+    if agent_id and api_integration_id:
+        # Add integration to agent
+        add_integration_to_agent(agent_id, api_integration_id)
+        
+        # Get agent integrations
+        get_agent_integrations(agent_id)
+        
+        # Remove integration from agent
+        remove_integration_from_agent(agent_id, api_integration_id)
+
+def run_knowledge_base_examples():
+    """Run examples for knowledge base operations"""
+    print("\n===== RUNNING KNOWLEDGE BASE EXAMPLES =====\n")
+    
+    # List all knowledge base files
+    list_knowledge_base_files()
+    
+    # Check if a file can be uploaded (1MB file)
+    check_file_upload_capability(1024 * 1024)
+    
+    # Get an agent ID for attaching files
+    agents_data = list_agents()
+    agent_id = agents_data.get('bots', [{}])[0].get('id') if agents_data.get('bots') and len(agents_data['bots']) > 0 else None
+    
+    # Upload a file if sample.pdf exists
+    try:
+        file_data = upload_file_to_knowledge_base("sample.pdf")
+        file_id = file_data.get('file', {}).get('id')
+        
+        if file_id and agent_id:
+            # Attach file to agent
+            attach_files_to_agent([file_id], agent_id)
+            
+            # Detach file from agent
+            detach_files_from_agent([file_id], agent_id)
+            
+            # Delete file from knowledge base
+            delete_file_from_knowledge_base(file_id)
+    except FileNotFoundError:
+        print("sample.pdf not found. Skipping file upload examples.")
+
+def run_phone_number_examples():
+    """Run examples for phone number operations"""
+    print("\n===== RUNNING PHONE NUMBER EXAMPLES =====\n")
+    
+    # List all phone numbers
+    phone_numbers = list_phone_numbers()
+    
+    # Get an agent ID
+    agents_data = list_agents()
+    agent_id = agents_data.get('bots', [{}])[0].get('id') if agents_data.get('bots') and len(agents_data['bots']) > 0 else None
+    
+    # Get the first phone number ID if available
+    phone_number_id = None
+    if phone_numbers.get('phone_numbers') and len(phone_numbers['phone_numbers']) > 0:
+        phone_number_id = phone_numbers['phone_numbers'][0]['id']
+    
+    if phone_number_id and agent_id:
+        # Attach phone number to agent
+        attach_phone_number_to_agent(phone_number_id, agent_id)
+        
+        # Detach phone number
+        detach_phone_number(phone_number_id)
+
 
 # Helper function to pretty print JSON responses
 def print_json_response(response, title=None):
@@ -236,223 +455,6 @@ def detach_phone_number(phone_number_id):
     response = client.phone_number.detach(phone_number_id)
     return print_json_response(response, f"Detaching phone number (ID: {phone_number_id})")
 
-# ===== Example Usage Functions =====
-
-def run_agent_examples():
-    """Run examples for agent operations"""
-    print("\n===== RUNNING AGENT EXAMPLES =====\n")
-    
-    # List agents
-    agents_data = list_agents()
-    
-    # Create a basic agent
-    agent_data = create_agent_with_full_config(
-        name="Example Agent",
-        welcome_message="Hello! I'm an example agent created using the Omnidimension SDK.",
-        context_breakdown=[
-            {"title": "Purpose", "body": "This agent demonstrates the SDK capabilities."}
-        ],
-        post_call_actions={
-            "email": {
-                "enabled": True,
-                "recipients": ["example@example.com"],
-                "include": ["summary", "extracted_variables"]
-            },
-            "extracted_variables": [
-                {
-                    "key": "caller_product_interest",
-                    "prompt": "Identify the products the caller is interested in..."
-                },
-            ]
-        }
-    )
-    
-    # Get the agent ID
-    agent_id = agent_data.get('id')
-    if agent_id:
-        # Get agent details
-        get_agent(agent_id)
-        
-        # Update the agent
-        update_agent(agent_id, {"name": "Updated Example Agent"})
-        
-        # Uncomment to delete the agent
-        # delete_agent(agent_id)
-
-def run_call_log_examples():
-    """Run examples for call log operations"""
-    print("\n===== RUNNING CALL LOG EXAMPLES =====\n")
-    
-    # Get call logs
-    call_logs = get_call_logs()
-    
-    # Get details of the first call log if available
-    if call_logs.get('call_log_data') and len(call_logs['call_log_data']) > 0:
-        call_log_id = call_logs['call_log_data'][0]['id']
-        get_call_log_details(call_log_id)
-    else:
-        print("No call logs found.")
-    
-    # Uncomment to dispatch a call
-    # agents_data = list_agents()
-    # if agents_data.get('bots') and len(agents_data['bots']) > 0:
-    #     agent_id = agents_data['bots'][0]['id']
-    #     dispatch_call(agent_id, '+1234567890')
-
-def run_integration_examples():
-    """Run examples for integration operations"""
-    print("\n===== RUNNING INTEGRATION EXAMPLES =====\n")
-    
-    # Get integration format examples
-    get_integration_format_examples()
-    
-    # Get user integrations
-    get_user_integrations()
-    
-    # Create a custom API integration
-    api_integration = create_custom_api_integration(
-        name="Weather API Integration",
-        description="Integration with weather service",
-        url="https://api.weatherapi.com/v1/current.json",
-        method="GET",
-        headers=[
-            {"key": "Content-Type", "value": "application/json"}
-        ],
-        query_params=[
-            
-            {
-                "key": "q",
-                "description": "Location query",
-                "type": "string",
-                "required": True,
-                "isLLMGenerated": True
-            }
-        ]
-    )
-    
-    # Create a Cal.com integration
-    cal_integration = create_cal_integration(
-        name="Meeting Scheduler Integration",
-        description="Integration with Cal.com calendar",
-        cal_api_key="cal_api_key_example",
-        cal_id="cal_user_id_example",
-        cal_timezone="America/New_York"
-    )
-    
-    # Create integration from JSON
-    integration_data = {
-        "name": "CRM API Integration",
-        "description": "Integration with CRM service",
-        "url": "https://api.crm-example.com/v1/contacts",
-        "method": "POST",
-        "integration_type": "custom_api",
-        "headers": [
-            {"key": "Authorization", "value": "Bearer token123"},
-            {"key": "Content-Type", "value": "application/json"}
-        ],
-        "body_type": "json",
-        "body_params": [
-            {
-                "key": "name",
-                "description": "Contact name",
-                "type": "string",
-                "required": True,
-                "isLLMGenerated": True
-            },
-            {
-                "key": "email",
-                "description": "Contact email",
-                "type": "string",
-                "required": True,
-                "isLLMGenerated": True
-            },
-            {
-                "key": "phone",
-                "description": "Contact phone number",
-                "type": "string",
-                "required": False,
-                "isLLMGenerated": True
-            }
-        ]
-    }
-    json_integration = create_integration_from_json(integration_data)
-    
-    # Create an agent for integration examples
-    agent_data = create_agent(
-        name="Integration Test Agent",
-        welcome_message="Hello! I'm an agent for testing integrations.",
-        context_breakdown=[
-            {"title": "Purpose", "body": "This agent demonstrates integration capabilities."}
-        ]
-    )
-    
-    # Get the agent ID and integration ID
-    agent_id = agent_data.get('id')
-    api_integration_id = api_integration.get('id')
-    
-    if agent_id and api_integration_id:
-        # Add integration to agent
-        add_integration_to_agent(agent_id, api_integration_id)
-        
-        # Get agent integrations
-        get_agent_integrations(agent_id)
-        
-        # Remove integration from agent
-        remove_integration_from_agent(agent_id, api_integration_id)
-
-def run_knowledge_base_examples():
-    """Run examples for knowledge base operations"""
-    print("\n===== RUNNING KNOWLEDGE BASE EXAMPLES =====\n")
-    
-    # List all knowledge base files
-    list_knowledge_base_files()
-    
-    # Check if a file can be uploaded (1MB file)
-    check_file_upload_capability(1024 * 1024)
-    
-    # Get an agent ID for attaching files
-    agents_data = list_agents()
-    agent_id = agents_data.get('bots', [{}])[0].get('id') if agents_data.get('bots') and len(agents_data['bots']) > 0 else None
-    
-    # Upload a file if sample.pdf exists
-    try:
-        file_data = upload_file_to_knowledge_base("sample.pdf")
-        file_id = file_data.get('file', {}).get('id')
-        
-        if file_id and agent_id:
-            # Attach file to agent
-            attach_files_to_agent([file_id], agent_id)
-            
-            # Detach file from agent
-            detach_files_from_agent([file_id], agent_id)
-            
-            # Delete file from knowledge base
-            delete_file_from_knowledge_base(file_id)
-    except FileNotFoundError:
-        print("sample.pdf not found. Skipping file upload examples.")
-
-def run_phone_number_examples():
-    """Run examples for phone number operations"""
-    print("\n===== RUNNING PHONE NUMBER EXAMPLES =====\n")
-    
-    # List all phone numbers
-    phone_numbers = list_phone_numbers()
-    
-    # Get an agent ID
-    agents_data = list_agents()
-    agent_id = agents_data.get('bots', [{}])[0].get('id') if agents_data.get('bots') and len(agents_data['bots']) > 0 else None
-    
-    # Get the first phone number ID if available
-    phone_number_id = None
-    if phone_numbers.get('phone_numbers') and len(phone_numbers['phone_numbers']) > 0:
-        phone_number_id = phone_numbers['phone_numbers'][0]['id']
-    
-    if phone_number_id and agent_id:
-        # Attach phone number to agent
-        attach_phone_number_to_agent(phone_number_id, agent_id)
-        
-        # Detach phone number
-        detach_phone_number(phone_number_id)
 
 if __name__ == "__main__":
     # Uncomment the function you want to run
@@ -461,3 +463,4 @@ if __name__ == "__main__":
     # run_integration_examples()
     run_knowledge_base_examples()
     # run_phone_number_examples()
+
