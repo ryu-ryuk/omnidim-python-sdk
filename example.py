@@ -3,7 +3,7 @@ import base64
 import json
 from omnidimension import Client
 
-# Initialize the Omnidimension client
+# Initialize the OmniDimension client
 api_key = os.environ.get('OMNIDIM_API_KEY', 'YBNmK6VxNLnPkIxwRNbZBKFR5C6_sRP0sSUFZeMr4p8')
 # production 
 client = Client(api_key)
@@ -22,7 +22,7 @@ def run_agent_examples():
     # Create a basic agent
     agent_data = create_agent_with_full_config(
         name="Example Agent",
-        welcome_message="Hello! I'm an example agent created using the Omnidimension SDK.",
+        welcome_message="Hello! I'm an example agent created using the OmniDimension SDK.",
         context_breakdown=[
             {"title": "Purpose", "body": "This agent demonstrates the SDK capabilities."}
         ],
@@ -267,7 +267,7 @@ def create_agent(name, welcome_message, context_breakdown):
     return print_json_response(response, f"Creating agent: {name}")
 
 def create_agent_with_full_config(name, welcome_message, context_breakdown, transcriber=None, model=None, 
-                                voice=None, web_search=None, post_call_actions=None):
+                                voice=None, web_search=None, post_call_actions=None, filler=None):
     """Create a new agent with full configuration options"""
     # Set default configurations if not provided
     if transcriber is None:
@@ -294,6 +294,13 @@ def create_agent_with_full_config(name, welcome_message, context_breakdown, tran
             "provider": "DuckDuckGo"
         }
     
+    if filler is None:
+        filler = {
+            "enabled": True,
+            "after_sec": 0,
+            "fillers": ['let me check'],
+        }
+    
     response = client.agent.create(
         name=name,
         welcome_message=welcome_message,
@@ -302,7 +309,8 @@ def create_agent_with_full_config(name, welcome_message, context_breakdown, tran
         model=model,
         voice=voice,
         web_search=web_search,
-        post_call_actions=post_call_actions
+        post_call_actions=post_call_actions,
+        filler=filler
     )
     return print_json_response(response, f"Creating agent with full config: {name}")
 

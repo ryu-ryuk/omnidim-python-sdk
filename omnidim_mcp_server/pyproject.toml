@@ -1,0 +1,12 @@
+[project]
+name = "omnidimension mcp server"
+version = "0.1.0"
+description = "omnidimension create your voice AI assistant"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastmcp>=2.3.3",
+    "httpx>=0.28.1",
+    "mcp[cli]>=1.8.1",
+    "omnidimension>=0.2.4",
+]

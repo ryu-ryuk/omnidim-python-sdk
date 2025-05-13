@@ -19,8 +19,8 @@ class Client(object):
             api_key (str): The API key for authentication.
             base_url (str): The base URL of the API.
         """
-        if not api_key or not base_url:
-            raise ValueError("API key and base URL are required.")
+        if not api_key:
+            raise ValueError("API key is required.")
         
         self.api_key = api_key
         self.base_url = base_url.rstrip('/')

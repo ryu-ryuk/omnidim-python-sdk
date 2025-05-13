@@ -2,12 +2,20 @@ from setuptools import setup, find_packages
 
 setup(
     name="omnidimension",
-    version="0.1.2",
-    packages=find_packages(),
+    version="0.2.8",  # Incremented version for MCP support
+    packages=find_packages() + ["omnidim_mcp_server"],
     install_requires=["requests"],
+    extras_require={
+        "mcp": ["fastapi>=0.95.0", "uvicorn>=0.21.0", "fastmcp>=0.1.0", "pydantic>=1.10.0"]
+    },
+    entry_points={
+        "console_scripts": [
+            "omnidim-mcp-server=omnidim_mcp_server.main:create_app",
+        ],
+    },
     author="https://www.omnidim.io/",
     author_email="kevin@omnidim.io",
-    description="Minimal SDK for Omni Assistant services",
+    description="SDK and MCP Server for Omni Assistant services",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/kevin-omnidim/omnidim-sdk",

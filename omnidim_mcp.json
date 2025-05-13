@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "Omnidimension": {
+      "command": "uvx",
+      "args": [
+        "--no-cache",
+        "--with",
+        "fastmcp",
+        "--from",
+        "omnidimension",
+        "omnidim-mcp-server"
+      ],
+      "env": {
+        "OMNIDIMENSION_API_KEY": "<YOUR_API_KEY>"
+      }
+    }
+  }
+}
