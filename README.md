@@ -195,5 +195,5 @@ client.phone_number.attach(phone_number_id=321, agent_id=123)
 
 ## 🌐 Learn More
 
-Visit [OmniDimension.io](https://www.omnidim.io/) to explore the full platform, UI builder, and templates.
+Visit [OmniDim.io](https://www.omnidim.io/) to explore the full platform, UI builder, and templates.
 
