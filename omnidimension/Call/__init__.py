@@ -31,9 +31,9 @@ class Call():
             raise ValueError("To Number must be a valid number and starts with + and country code.")            
         
         data = {
-            "agentId": agent_id,
-            "toNumber": to_number,
-            "callInformation": call_context,
+            "agent_id": agent_id,
+            "to_number": to_number,
+            "call_context": call_context,
         }
 
         return self.client.post("calls/dispatch", data=data)
