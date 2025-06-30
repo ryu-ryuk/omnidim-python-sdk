@@ -9,14 +9,14 @@ class Call():
         """
         self.client = client
 
-    def dispatch_call(self, agent_id, to_number, call_context=""):
+    def dispatch_call(self, agent_id, to_number, call_context={}):
         """
         Dispatch a call to agent with the provided call context.
 
         Args:
             agent_id (int): id for the agent.
             to_number (string): valid phone number with country code.
-            call_context (string): call context to be passed to agent during call.
+            call_context (dict): call context to be passed to agent during call.
 
         Returns:
             dict: Response from the API containing success.
