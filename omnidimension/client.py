@@ -31,6 +31,7 @@ class Client(object):
         self._integrations = None
         self._knowledge_base = None
         self._phone_number = None
+        self._simulation = None
         
         # Verify API key format (basic validation)
         if not isinstance(api_key, str) or len(api_key.strip()) < 8:
@@ -174,3 +175,11 @@ class Client(object):
             from .PhoneNumber import PhoneNumber
             self._phone_number = PhoneNumber(self)
         return self._phone_number
+
+    @property
+    def simulation(self):
+        """Get the Simulation client."""
+        if self._simulation is None:
+            from .Simulation import Simulation
+            self._simulation = Simulation(self)
+        return self._simulation
