@@ -76,13 +76,14 @@ class KnowledgeBase():
         
         return self.client.post("knowledge_base/delete", data=data)
     
-    def attach(self, file_ids, agent_id):
+    def attach(self, file_ids, agent_id, when_to_use=None):
         """
         Attach multiple files to an agent.
         
         Args:
             file_ids (list): List of file IDs to attach.
             agent_id (int): ID of the agent to attach files to.
+            when_to_use: when to use this files
             
         Returns:
             dict: Response indicating success or failure.
@@ -97,7 +98,8 @@ class KnowledgeBase():
             
         data = {
             "file_ids": file_ids,
-            "agent_id": agent_id
+            "agent_id": agent_id,
+            "when_to_use": when_to_use
         }
         
         return self.client.post("knowledge_base/attach", data=data)

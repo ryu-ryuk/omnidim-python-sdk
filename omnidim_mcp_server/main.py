@@ -17,13 +17,13 @@ class TContextBreakdown(TypedDict):
 
 
 @mcp.tool(description="for creating a new assistant")
-def dispatch_a_call(assistant_id: int, to_number: str, call_context: str) -> Dict:
+def dispatch_a_call(assistant_id: int, to_number: str, call_context: dict) -> Dict:
     """
     Dispatch a call to given number
     params: 
         assistant_id: id of the assistant 
         to_number: a valid phone number
-        call_context: a text which contain information about whom we are calling to and purpose.
+        call_context: a dict which contain information about whom we are calling to and purpose. like { 'caller_name': 'John Doe', 'purpose': 'appointment' }
     Returns: 
         - success 
     """
