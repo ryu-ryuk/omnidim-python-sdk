@@ -388,9 +388,27 @@ def create_agent_interactive():
                     choices=["eleven_labs", "deepgram", "google", "cartesia", "rime"],
                     style=get_style(MENU_STYLE)
                 ).execute()
+                
+                # provider-specific guidance for voice IDs
+                voice_id_guidance = {
+                    "eleven_labs": "ElevenLabs voice ID (e.g., JBFqnCBsd6RMkjVDRZzb)",
+                    "deepgram": "Deepgram voice ID (e.g., aura-asteria-en)",
+                    "google": "Google Cloud voice name (e.g., en-US-Wavenet-D)",
+                    "cartesia": "Cartesia voice ID (e.g., sonic)",
+                    "rime": "Rime voice ID"
+                }
+                # TODO: update the defaults
+                default_examples = {
+                    "eleven_labs": "JBFqnCBsd6RMkjVDRZzb",
+                    "deepgram": "aura-asteria-en", 
+                    "google": "",
+                    "cartesia": "",
+                    "rime": ""
+                }
+                
                 voice_id = inquirer.text(
-                    message="Voice ID",
-                    default="JBFqnCBsd6RMkjVDRZzb",
+                    message=f"Voice ID ({voice_id_guidance.get(provider, 'Voice ID for selected provider')})",
+                    default=default_examples.get(provider, ""),
                     style=get_style(INPUT_STYLE)
                 ).execute()
                 kwargs["voice"] = {"provider": provider, "voice_id": voice_id}
@@ -1119,7 +1137,7 @@ def phone_menu():
                 
             elif action == "attach":
                 try:
-                    console.print(create_section_banner("Attach Phone Number", "�"))
+                    console.print(create_section_banner("Attach Phone Number", "⛓"))
                     
                     from .core.utils import safe_int_input
                     phone_id = safe_int_input("Phone number ID", "Phone Number ID")
@@ -1133,7 +1151,7 @@ def phone_menu():
                     
             elif action == "detach":
                 try:
-                    console.print(create_section_banner("Detach Phone Number", "❌"))
+                    console.print(create_section_banner("Detach Phone Number", "✖"))
                     
                     from .core.utils import safe_int_input
                     phone_id = safe_int_input("Phone number ID", "Phone Number ID")
