@@ -3,6 +3,8 @@ from setuptools import setup, find_packages
 setup(
     name="omnidimension",
     version="0.2.11",
+    # packages=find_packages(include=["omnidimension", "omnidimension.*"]),
+    # we ought to include what we want explicitly, so PyPI doesn't contain unnecessary files
     packages=find_packages() + ["omnidim_mcp_server"],
     install_requires=["requests", "typer>=0.9.0", "rich>=13.0.0", "inquirerpy>=0.3.0"],
     extras_require={
