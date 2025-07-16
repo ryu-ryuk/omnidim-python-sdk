@@ -873,3 +873,22 @@ def safe_comma_separated_ids(prompt: str, field_name: str = "IDs") -> list:
                 console.print(f"[red]✖ All {field_name} must be positive integers. Please try again.[/red]")
         except ValueError:
             console.print(f"[red]✖ {field_name} must be comma-separated integers (e.g., 1,2,3). Please try again.[/red]")
+
+## Helper 
+def debug_response_structure(response, context="Response"):
+    """Debug utility to print response structure"""
+    console.print(f"[yellow]DEBUG {context}:[/yellow]")
+    console.print(f"Type: {type(response)}")
+    if isinstance(response, dict):
+        console.print(f"Keys: {list(response.keys())}")
+        for key, value in response.items():
+            console.print(f"  {key}: {type(value)} - {str(value)[:100]}...")
+    elif isinstance(response, list):
+        console.print(f"Length: {len(response)}")
+        if response:
+            console.print(f"First item type: {type(response[0])}")
+            if isinstance(response[0], dict):
+                console.print(f"First item keys: {list(response[0].keys())}")
+    else:
+        console.print(f"Value: {str(response)[:200]}...")
+    console.print("---")
