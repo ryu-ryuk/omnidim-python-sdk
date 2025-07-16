@@ -1207,26 +1207,38 @@ def integration_menu():
                     client = get_client()
                     integrations = client.integrations.get_user_integrations()
                     
-                    if isinstance(integrations, dict):
-                        data = integrations.get("json", integrations)
-                        if isinstance(data, list) and data:
-                            # create a table for integrations
-                            table = Table(show_header=True, header_style="bold cyan")
-                            table.add_column("ID", style="yellow")
-                            table.add_column("Name", style="green")
-                            table.add_column("Type", style="blue")
-                            table.add_column("URL", style="magenta")
-                            
-                            for integration in data[:10]:  # show first 10
-                                table.add_row(
-                                    str(integration.get("id", "")),
-                                    integration.get("name", ""),
-                                    integration.get("integration_type", ""),
-                                    integration.get("url", "")[:50] + "..." if len(integration.get("url", "")) > 50 else integration.get("url", "")
-                                )
-                            console.print(table)
-                        else:
-                            console.print(create_info_message("No integrations found"))
+                    data = None
+                    if isinstance(integrations, list):
+                        data = integrations
+                    elif isinstance(integrations, dict):
+                        # check for nested structure: response.json.integrations
+                        json_data = integrations.get("json", {})
+                        if isinstance(json_data, dict):
+                            data = json_data.get("integrations")
+                        
+                        # fallback to other possible keys // just in case
+                        if not data:
+                            data = (integrations.get("data") or 
+                                integrations.get("integrations") or 
+                                integrations.get("results") or
+                                [integrations] if integrations.get("id") else None)
+                    
+                    if data and isinstance(data, list) and len(data) > 0:
+                        # create a table for integrations
+                        table = Table(show_header=True, header_style="bold cyan")
+                        table.add_column("ID", style="yellow")
+                        table.add_column("Name", style="green")
+                        table.add_column("Type", style="blue")
+                        table.add_column("URL", style="magenta")
+                        
+                        for integration in data[:10]:  # show first 10
+                            table.add_row(
+                                str(integration.get("id", "")),
+                                integration.get("name", ""),
+                                integration.get("integration_type", ""),
+                                integration.get("url", "")[:50] + "..." if len(integration.get("url", "")) > 50 else integration.get("url", "")
+                            )
+                        console.print(table)
                     else:
                         console.print(create_info_message("No integrations found"))
                         
@@ -1245,23 +1257,41 @@ def integration_menu():
                     client = get_client()
                     integrations = client.integrations.get_agent_integrations(agent_id)
                     
-                    if isinstance(integrations, dict):
-                        data = integrations.get("json", integrations)
-                        if isinstance(data, list) and data:
-                            table = Table(show_header=True, header_style="bold cyan")
-                            table.add_column("ID", style="yellow")
-                            table.add_column("Name", style="green")
-                            table.add_column("Type", style="blue")
+                    data = None
+                    if isinstance(integrations, list):
+                        data = integrations
+                    elif isinstance(integrations, dict):
+                        # check for nested structure: response.json.integrations
+                        json_data = integrations.get("json", {})
+                        if isinstance(json_data, dict):
+                            data = json_data.get("integrations")
+                        
+                        # fallback just in case
+                        if not data:
+                            data = (integrations.get("data") or 
+                                    integrations.get("integrations") or 
+                                    integrations.get("results") or
+                                    [integrations] if integrations.get("id") else None)
+                    
+                    if data and isinstance(data, list) and len(data) > 0:
+                        table = Table(show_header=True, header_style="bold cyan")
+                        table.add_column("ID", style="yellow")
+                        table.add_column("Name", style="green")
+                        table.add_column("Type", style="blue")
+                        table.add_column("Status", style="magenta")
+                        
+                        for integration in data:
+                            # agent integrations use 'type'
+                            integration_type = integration.get("type") or integration.get("integration_type", "")
+                            status = "Active" if integration.get("is_active", False) else "Inactive"
                             
-                            for integration in data:
-                                table.add_row(
-                                    str(integration.get("id", "")),
-                                    integration.get("name", ""),
-                                    integration.get("integration_type", "")
-                                )
-                            console.print(table)
-                        else:
-                            console.print(create_info_message(f"No integrations found for agent {agent_id}"))
+                            table.add_row(
+                                str(integration.get("id", "")),
+                                integration.get("name", ""),
+                                integration_type,
+                                status
+                            )
+                        console.print(table)
                     else:
                         console.print(create_info_message(f"No integrations found for agent {agent_id}"))
                         

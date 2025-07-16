@@ -770,7 +770,7 @@ def create_knowledge_base_table(files: List[Dict]) -> Table:
                 display_url = download_url[:32] + "..."
             else:
                 display_url = download_url
-            download_display = f"[link={download_url}][blue underline]🔗 {display_url}[/blue underline][/link]"
+            download_display = f"[link={download_url}][blue underline]{display_url}[/blue underline][/link]"
         else:
             download_display = "[dim]No URL[/dim]"
         
