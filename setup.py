@@ -4,13 +4,14 @@ setup(
     name="omnidimension",
     version="0.2.11",
     packages=find_packages() + ["omnidim_mcp_server"],
-    install_requires=["requests"],
+    install_requires=["requests", "typer>=0.9.0", "rich>=13.0.0", "inquirerpy>=0.3.0"],
     extras_require={
         "mcp": ["fastapi>=0.95.0", "uvicorn>=0.21.0", "fastmcp>=0.1.0", "pydantic>=1.10.0"]
     },
     entry_points={
         "console_scripts": [
             "omnidim-mcp-server=omnidim_mcp_server.main:create_app",
+            "omnidim=omnidimension.cli:main",
         ],
     },
     author="https://www.omnidim.io/",
