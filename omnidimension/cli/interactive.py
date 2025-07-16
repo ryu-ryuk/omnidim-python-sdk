@@ -525,13 +525,23 @@ def create_agent_interactive():
         if agent_id:
             console.print(create_success_message(f"Agent created successfully! ID: {agent_id}"))
             
-            # Show detailed agent info
-            try:
-                agent_details = client.agent.get(agent_id)
-                from .core.utils import create_agent_details_ui
-                create_agent_details_ui(agent_details)
-            except Exception as e:
-                console.print(create_warning_message(f"Could not fetch agent details: {e}"))
+            # ask user what to do next
+            next_action = inquirer.select(
+                message="Want to see what you created?",
+                choices=[
+                    Choice("view", name="View agent details"),
+                    Choice("back", name="Return to agents menu ↗")
+                ],
+                style=get_style(MENU_STYLE)
+            ).execute()
+            
+            if next_action == "view":
+                try:
+                    agent_details = client.agent.get(agent_id)
+                    from .core.utils import create_agent_details_ui
+                    create_agent_details_ui(agent_details)
+                except Exception as e:
+                    console.print(create_warning_message(f"Could not fetch agent details: {e}"))
         else:
             console.print(create_warning_message("Agent created but ID not found in response."))
         
@@ -820,8 +830,8 @@ def kb_menu():
                     Choice("quota", name="∎ Show Quota Status"),
                     Choice("upload", name="⇧ Upload File"),
                     Separator(),
-                    Choice("attach", name="⛶ Attach Files to Agent"),
-                    Choice("detach", name="⛶✖ Detach Files from Agent"),
+                    Choice("attach", name="↗ Attach Files to Agent"),
+                    Choice("detach", name="✖ Detach Files from Agent"),
                     Separator(),
                     Choice("delete", name="✖ Delete File"),
                     Choice("check-upload", name="✔ Check Upload Eligibility"),
